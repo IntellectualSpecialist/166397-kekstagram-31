@@ -5,11 +5,20 @@ import {showAlertGet} from './util.js';
 import {saveThumbnails} from './photo-modal.js';
 import {setFiltersClick} from './filters.js';
 
-getData().then((photos) => {
-  saveThumbnails(photos);
-  renderThumbnails(photos);
+const bootstrap = async () => {
+  try {
+    const photos = await getData();
+    saveThumbnails(photos);
+    renderThumbnails(photos);
 
-  setFiltersClick(photos);
-}).catch(showAlertGet);
+    setFiltersClick(photos);
+    if (!photos) {
+      throw new Error();
+    }
+  } catch (error) {
+    showAlertGet();
+  }
+};
 
+bootstrap();
 setFileUploadControlEvent();

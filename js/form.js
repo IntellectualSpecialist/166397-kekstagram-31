@@ -78,27 +78,31 @@ const unblockSubmitButton = () => {
   submitButtonElement.textContent = SubmitButtonText.IDLE;
 };
 
-const onFormSubmit = (evt) => {
-  evt.preventDefault();
+const sendFormData = async (formElement) => {
   let resultSubmit;
 
   const isValidate = isFormValidate();
   if (isValidate) {
     resultSubmit = 'success';
     blockSubmitButton();
-    sendData(new FormData(evt.target)).then(() => {
+
+    try {
+      await sendData(new FormData(formElement));
       closeModalForm();
       showSuccessSend();
-    })
-      .catch(() => {
-        showAlertSend();
-        resultSubmit = 'error';
-      })
-      .finally(() => {
-        unblockSubmitButton();
-        setEventsOnInfoModal(resultSubmit);
-      });
+    } catch (error) {
+      showAlertSend();
+      resultSubmit = 'error';
+    } finally {
+      unblockSubmitButton();
+      setEventsOnInfoModal(resultSubmit);
+    }
   }
+};
+
+const onFormSubmit = async (evt) => {
+  evt.preventDefault();
+  sendFormData(evt.target);
 };
 
 const setUserFormSubmit = () => {
